@@ -3,41 +3,6 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
-
-# Leitura do arquivo
-def load_instance_from_excel(file_path):
-    """
-    Le o arquivo Excel:
-    - Coluna 0: 'Tarefa'
-    - Linha 0: cabeçalho das maquinas (1,2,3,4,5)
-    - Linhas seguintes: tarefas 1..25
-    - Última linha: DueDate
-    """
-
-    df = pd.read_excel(file_path)
-
-    df.columns = ["Tarefa", "M1", "M2", "M3", "M4", "M5", "Peso"]
-    df = df.dropna(how="all").reset_index(drop=True)
-
-    due_row = df[df["Tarefa"].astype(str).str.strip().str.lower() == "duedate"]
-    if due_row.empty:
-        raise ValueError("Não foi encontrada a linha do DueDate.")
-
-    due_date = int(due_row.iloc[0]["M1"])
-    df = df[df["Tarefa"].astype(str).str.strip().str.lower() != "duedate"].copy()
-    df = df[df["Tarefa"].notna()].copy()
-    df["Tarefa"] = df["Tarefa"].astype(int)
-    df = df.sort_values("Tarefa").reset_index(drop=True)
-    pt = df[["M1", "M2", "M3", "M4", "M5"]].astype(float).to_numpy()
-    we = df["Peso"].astype(float).to_numpy()
-
-    n_tasks = pt.shape[0]
-    n_machines = pt.shape[1]
-
-    return pt, we, due_date, n_tasks, n_machines
-
-
-
 # Representação da solução
 def create_empty_solution(n_machines):
     return [[] for _ in range(n_machines)]
@@ -198,8 +163,6 @@ def local_search(solution, pt, we, due_date, objective, rng, max_no_improve=60):
 
     return current, current_val
 
-
-
 # VNS
 def run_vns(pt, we, due_date, objective="f1", max_iter=400, seed=42):
     rng = random.Random(seed)
@@ -236,7 +199,6 @@ def run_vns(pt, we, due_date, objective="f1", max_iter=400, seed=42):
             iter_count += 1
 
     return best, best_val, history
-
 
 # Execuções Múltiplas
 def run_multiple_times(pt, we, due_date, objective, n_runs=5, max_iter=400, seed_base=42):
