@@ -3,7 +3,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from config import *
-from optimization import *
+from monobjetivo.optimization import *
 
 # Plots dos gráficos
 def plot_convergence(results_summary, title):
