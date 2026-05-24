@@ -78,6 +78,10 @@ def run_single_objective(pt, we, due_date):
 
     return summary_f1, summary_f2
 
+# TODO: tornar greedy_initial_solution em uma função geral
+#       remover objective_value do optmization pra criar um arquivo geral de otimização
+#       alterar o local_search pra aceitar funções gerais de objetivo (pra usar o vns pra SP e E-restrito)
+#       fazer o msm para run_vns e run_multiple_times
 def run_multiobjective(pt, we, due_date, summary_f1, summary_f2):
     peso = 0,2 # temporario
     # soma_ponderada(solucao_corrente, pt, we, due_date,summary_f1, summary_f2, peso)
