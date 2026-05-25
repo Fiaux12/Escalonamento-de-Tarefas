@@ -33,6 +33,9 @@ def evaluate_solution(solution, pt, we, due_date):
 
     return makespan, weighted_tardiness, completion_times, tardiness, machine_completion
 
+def make_objective(pt, we, due_date, objective):
+    return lambda sol: objective_value(sol, pt, we, due_date, objective)
+
 def objective_value(solution, pt, we, due_date, objective):
     makespan, weighted_tardiness, _, _, _ = evaluate_solution(solution, pt, we, due_date)
     if objective == "f1":
@@ -126,19 +129,51 @@ def inter_machine_swap(solution, rng):
     sol[k1][i], sol[k2][j] = sol[k2][j], sol[k1][i]
     return sol
 
+def intra_machine_2opt(solution, rng):
+    sol = clone_solution(solution)
+    candidate_machines = [k for k in range(len(sol)) if len(sol[k]) >= 3]
+
+    if not candidate_machines:
+        return sol
+
+    k = rng.choice(candidate_machines)
+    i, j = sorted(rng.sample(range(len(sol[k])), 2))
+    sol[k][i:j+1] = sol[k][i:j+1][::-1]
+    return sol
+
+def or_opt(solution, rng):
+    sol = clone_solution(solution)
+    candidate_machines = [k for k in range(len(sol)) if len(sol[k]) >= 2]
+
+    if not candidate_machines:
+        return sol
+
+    k_from = rng.choice(candidate_machines)
+    idx = rng.randrange(len(sol[k_from]) - 1)
+    block = sol[k_from][idx:idx+2]
+    sol[k_from] = sol[k_from][:idx] + sol[k_from][idx+2:]
+
+    k_to = rng.choice([k for k in range(len(sol)) if k != k_from])
+    pos = rng.randrange(len(sol[k_to]) + 1)
+    sol[k_to] = sol[k_to][:pos] + block + sol[k_to][pos:]
+
+    return sol
+
 NEIGHBORHOODS = [
     ("swap_intra", intra_machine_swap),
     ("insert_inter", inter_machine_insert),
     ("swap_inter", inter_machine_swap),
+    ("2opt_intra", intra_machine_2opt),
+    ("or_opt", or_opt),
 ]
 
 
 
 
 # Busca Local
-def local_search(solution, pt, we, due_date, objective, rng, max_no_improve=60):
+def local_search(solution, obj_func, rng, max_no_improve=60):
     current = clone_solution(solution)
-    current_val = objective_value(current, pt, we, due_date, objective)
+    current_val = obj_func(current)
 
     no_improve = 0
 
@@ -149,7 +184,7 @@ def local_search(solution, pt, we, due_date, objective, rng, max_no_improve=60):
 
         for _, neigh in neighborhoods:
             candidate = neigh(current, rng)
-            candidate_val = objective_value(candidate, pt, we, due_date, objective)
+            candidate_val = obj_func(candidate)
 
             if candidate_val < current_val:
                 current = candidate
@@ -164,11 +199,11 @@ def local_search(solution, pt, we, due_date, objective, rng, max_no_improve=60):
     return current, current_val
 
 # VNS
-def run_vns(pt, we, due_date, objective="f1", max_iter=400, seed=42):
+def run_vns(pt, we, due_date, obj_func, objective="f1", max_iter=400, seed=42):
     rng = random.Random(seed)
 
     current = greedy_initial_solution(pt, we, due_date, objective, rng)
-    current, current_val = local_search(current, pt, we, due_date, objective, rng)
+    current, current_val = local_search(current, obj_func, rng)
 
     best = clone_solution(current)
     best_val = current_val
@@ -183,10 +218,14 @@ def run_vns(pt, we, due_date, objective="f1", max_iter=400, seed=42):
             _, neigh = NEIGHBORHOODS[k]
 
             shaken = neigh(best, rng)
+            # teste -----
+            shaking_strength = k + 1 
+            shaken = best
+            for _ in range(shaking_strength):
+                shaken = neigh(shaken, rng)
+            # teste -----
 
-            candidate, candidate_val = local_search(
-                shaken, pt, we, due_date, objective, rng
-            )
+            candidate, candidate_val = local_search(shaken, obj_func, rng)
 
             if candidate_val < best_val:
                 best = candidate
@@ -210,8 +249,11 @@ def run_multiple_times(pt, we, due_date, objective, n_runs=5, max_iter=400, seed
     for r in range(n_runs):
         seed = seed_base + r
 
+        obj_func = make_objective(pt, we, due_date, objective)
+
         best_sol, best_val, history = run_vns(
             pt, we, due_date,
+            obj_func,
             objective=objective,
             max_iter=max_iter,
             seed=seed

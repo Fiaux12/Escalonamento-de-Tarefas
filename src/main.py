@@ -78,12 +78,22 @@ def run_single_objective(pt, we, due_date):
 
     return summary_f1, summary_f2
 
-# TODO: tornar greedy_initial_solution em uma função geral
-#       remover objective_value do optmization pra criar um arquivo geral de otimização
-#       alterar o local_search pra aceitar funções gerais de objetivo (pra usar o vns pra SP e E-restrito)
-#       fazer o msm para run_vns e run_multiple_times
 def run_multiobjective(pt, we, due_date, summary_f1, summary_f2):
-    peso = 0,2 # temporario
+    pesos = np.linspace(0, 1, 11)
+    resultados_pareto = []
+
+    for peso in pesos:
+        best_sol, _, _ = run_vns_soma_ponderada(
+            pt, we, due_date, summary_f1, summary_f2, peso,
+            n_runs=N_RUNS,
+            max_iter=MAX_ITER,
+            seed_base=SEED_BASE + int(peso * 100) 
+        )
+        f1, f2, _, _, _ = evaluate_solution(best_sol, pt, we, due_date)
+        resultados_pareto.append((f1, f2))
+        print(f"\Soma ponderada com λ = {peso:.2f}, (f1, f2)")
+    print("Solucao pareto:", resultados_pareto)
+    
     # soma_ponderada(solucao_corrente, pt, we, due_date,summary_f1, summary_f2, peso)
 
 
