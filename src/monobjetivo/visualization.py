@@ -3,7 +3,8 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from config import *
-from monobjetivo.optimization import *
+from optimization import *
+from evaluation import *
 
 # Plots dos gráficos
 def plot_convergence(results_summary, title):
@@ -20,9 +21,8 @@ def plot_convergence(results_summary, title):
     plt.close()
 
 def plot_best_schedule(solution, pt, we, due_date, title="Melhor solução"):
-    makespan, weighted_tardiness, completion_times, tardiness, machine_completion = evaluate_solution(
-        solution, pt, we, due_date
-    )
+    makespan = evaluate_makespan(solution, we, pt)
+    weighted_tardiness = evaluate_weighted_tardiness(solution, we, pt, due_date)
 
     plt.figure(figsize=(10, 5))
 
@@ -60,7 +60,7 @@ def plot_best_schedule(solution, pt, we, due_date, title="Melhor solução"):
     print("Resumo da melhor solução:")
     print(f"Makespan = {makespan:.2f}")
     print(f"Atraso ponderado = {weighted_tardiness:.2f}")
-    print(f"Tempos finais das máquinas = {machine_completion}")
+    # print(f"Tempos finais das máquinas = {machine_completion}")
     print(solution_to_string(solution))
 
 

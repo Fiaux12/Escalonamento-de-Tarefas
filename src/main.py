@@ -3,9 +3,11 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 from config import *
-from monobjetivo.optimization import *
+from optimization import *
 from monobjetivo.visualization import *
-from multiobjetivo.soma_ponderada import *
+# from multiobjetivo.soma_ponderada import *
+
+from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 
 # Leitura do arquivo
 def load_instance_from_excel(file_path):
@@ -47,13 +49,21 @@ def print_instance_info(n_tasks, n_machines, due_date, pt, we):
     print(f"Due date: {due_date}")
     print(f"Formato PT: {pt.shape}")
     print(f"Formato WE: {we.shape}")
+    print(pt)
+    print(we)
 
 
-def run_single_objective(pt, we, due_date):
-    # f1 = makespan
+def run_single_objective(n_tasks,n_machines, pt, we, due_date):
+    # Cria lista de tasks 
+    tasks = list(range(n_tasks))
+    tasks.sort(key=lambda j: -np.min(pt[j, :]))
+    # Cria evaluator
+    evaluator = build_makespan_evaluator(we, pt)
+
     summary_f1 = run_multiple_times(
-        pt, we, due_date,
-        objective="f1",
+        evaluator, 
+        tasks,
+        n_machines,
         n_runs=N_RUNS,
         max_iter=MAX_ITER,
         seed_base=SEED_BASE
@@ -63,13 +73,21 @@ def run_single_objective(pt, we, due_date):
     plot_convergence(summary_f1, "Curvas de convergência - f1 (makespan)")
     plot_best_schedule(summary_f1["best_solution"], pt, we, due_date, "Melhor solução para f1 (makespan)")
 
-    # f2 = soma ponderada dos atrasos
+    # ====================================
+
+    # Cria lista de tasks 
+    tasks = list(range(n_tasks))
+    tasks.sort(key=lambda j: (-we[j], np.min(pt[j, :])))
+
+    # # Cria evaluator
+    evaluator = build_weighted_tardiness_evaluator(we, pt, due_date)
     summary_f2 = run_multiple_times(
-        pt, we, due_date,
-        objective="f2",
+        evaluator, 
+        tasks,
+        n_machines,
         n_runs=N_RUNS,
         max_iter=MAX_ITER,
-        seed_base=SEED_BASE + 1000
+        seed_base=SEED_BASE
     )
 
     print_summary_table(summary_f2, "f2 (soma ponderada dos atrasos)")
@@ -78,23 +96,23 @@ def run_single_objective(pt, we, due_date):
 
     return summary_f1, summary_f2
 
-def run_multiobjective(pt, we, due_date, summary_f1, summary_f2):
-    pesos = np.linspace(0, 1, 11)
-    resultados_pareto = []
+# def run_multiobjective(pt, we, due_date, summary_f1, summary_f2):
+#     pesos = np.linspace(0, 1, 11)
+#     resultados_pareto = []
 
-    for peso in pesos:
-        best_sol, _, _ = run_vns_soma_ponderada(
-            pt, we, due_date, summary_f1, summary_f2, peso,
-            n_runs=N_RUNS,
-            max_iter=MAX_ITER,
-            seed_base=SEED_BASE + int(peso * 100) 
-        )
-        f1, f2, _, _, _ = evaluate_solution(best_sol, pt, we, due_date)
-        resultados_pareto.append((f1, f2))
-        print(f"\Soma ponderada com λ = {peso:.2f}, (f1, f2)")
-    print("Solucao pareto:", resultados_pareto)
+#     for peso in pesos:
+#         best_sol, _, _ = run_vns_soma_ponderada(
+#             pt, we, due_date, summary_f1, summary_f2, peso,
+#             n_runs=N_RUNS,
+#             max_iter=MAX_ITER,
+#             seed_base=SEED_BASE + int(peso * 100) 
+#         )
+#         f1, f2, _, _, _ = evaluate_solution(best_sol, pt, we, due_date)
+#         resultados_pareto.append((f1, f2))
+#         print(f"\Soma ponderada. Pesos = {peso:.2f}, (f1, f2)")
+#     print("Solucao pareto:", resultados_pareto)
     
-    # soma_ponderada(solucao_corrente, pt, we, due_date,summary_f1, summary_f2, peso)
+#     # soma_ponderada(solucao_corrente, pt, we, due_date,summary_f1, summary_f2, peso)
 
 
 
@@ -105,11 +123,43 @@ def main():
 
     print_instance_info(n_tasks, n_machines, due_date, pt, we)
 
-    # Mono-objetivo
-    solucao_f1, solucao_f2 = run_single_objective(pt, we, due_date)
+    get_rng = lambda : random.Random(42)
 
-    # Multiobjetivo
-    run_multiobjective(pt, we, due_date, solucao_f1, solucao_f2)
+    # Comparando funcao desacoplada: makespan
+    # Greedy antigo
+    # res = greedy_initial_solution(pt, we, due_date, "f1", get_rng())
+    # print(res)
+
+    # # Greedy novo
+    # # Cria lista de tasks 
+    # tasks = list(range(n_tasks))
+    # tasks.sort(key=lambda j: -np.min(pt[j, :]))
+    # # Cria evaluator
+    # evaluator = build_makespan_evaluator(we, pt)
+    # res = gis(evaluator, tasks, n_machines, get_rng())
+    # print(res)
+
+    # # ====================================
+
+    # # Comparando funcao desacoplada: weighted_tardiness
+    # # Greedy antigo
+    # # res = greedy_initial_solution(pt, we, due_date, "f2", get_rng())
+    # # print(res)
+
+    # # Greedy novo
+    # # Cria lista de tasks 
+    # tasks = list(range(n_tasks))
+    # tasks.sort(key=lambda j: (-we[j], np.min(pt[j, :])))
+    # # Cria evaluator
+    # evaluator = build_weighted_tardiness_evaluator(we, pt, due_date)
+    # res = gis(evaluator, tasks, n_machines, get_rng())
+    # print(res)
+
+    # # Mono-objetivo
+    solucao_f1, solucao_f2 = run_single_objective(n_tasks, n_machines, pt, we, due_date)
+
+    # # Multiobjetivo
+    # run_multiobjective(pt, we, due_date, solucao_f1, solucao_f2)
 
 if __name__ == "__main__":
     main()
