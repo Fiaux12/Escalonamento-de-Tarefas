@@ -151,11 +151,10 @@ def main():
 
     # for peso in pesos:
     summary = run_vns_soma_ponderada(
-        evaluator_configs[0]["evaluator"],
-        evaluator_configs[1]["evaluator"],
+        evaluator_configs,
         summaries,
         peso, tasks, n_machines)
-    print_summary_table(summary, "Fronteira pareto")
+    # print_summary_table(summary, "Fronteira pareto")
 
 
 if __name__ == "__main__":

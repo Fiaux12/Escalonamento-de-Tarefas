@@ -1,0 +1,2 @@
+ponto nadir f1 = 158
+ponto nadir f2 = 13738.00

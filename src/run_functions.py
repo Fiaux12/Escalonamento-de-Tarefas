@@ -35,35 +35,58 @@ def run_single_objective(evaluator_configs, n_machine, pt, we, due_date):
 # Funcoes multiobjetivos ========================================================
 
 # De acordo com os pesos passados como parametro, retorna a soma ponderada de f1 e f2 para a solucao corrente
-def soma_ponderada(solucao_corrente, evaluator1, evaluator2, summary, peso):
-    f1, f2 = normalizar(solucao_corrente, evaluator1, evaluator2, summary)
-
+def soma_ponderada(peso, f1, f2):
     return (peso * f1) + ((1-peso) * f2)
-
 
 # Recebe como parametro a solucao corrente, os dois evaluators e dois summaries
 # Retorna f1 e f2 normalizados
-def normalizar(solucao_corrente, evaluator1, evaluator2, summaries):
-    solucao_f1 = summaries[0]["best_solution"]
-    solucao_f2 = summaries[1]["best_solution"]
+def normalizar(solucao_corrente, evaluators, summaries, maximos):
+    min_f1 = summaries[0]["best_value"]
+    min_f2 = summaries[1]["best_value"]
 
+    f1 = evaluators[0]["evaluator"](solucao_corrente)
+    f2 = evaluators[1]["evaluator"](solucao_corrente)
 
-    min_f1, f2_em_f1 = evaluator1(solucao_f1), evaluator2(solucao_f1)
-    f1_em_f2, min_f2 = evaluator1(solucao_f2), evaluator2(solucao_f2)
-    f1, f2 = evaluator1(solucao_corrente), evaluator2(solucao_corrente)
+    f1_normalizado = (f1 - min_f1)/(maximos[0] - min_f1)
+    f2_normalizado = (f2 - min_f2)/(maximos[1] - min_f2)
 
-    max_f1 = f1_em_f2
-    max_f2 = f2_em_f1
-
-    f1_normalizado = (f1 - min_f1)/(max_f1 - min_f1)
-    f2_normalizado = (f2 - min_f2)/(max_f2 - min_f2)
+    print(f"min f1 (makespan):   {summaries[0]['best_value']:.2f}")
+    print(f"min f2 (tardiness):  {summaries[1]['best_value']:.2f}")
+    print(f"nadir f1:            {maximos[0]:.2f}")
+    print(f"nadir f2:            {maximos[1]:.2f}")
+    print(f"f1 normalizado:            {f1_normalizado:.2f}")
+    print(f"f2 normalizado:            {f2_normalizado:.2f}")
 
     return f1_normalizado, f2_normalizado
 
+# Calcula os maximos de f1 e f2 (ponto nadir)
+def calcular_maximos(evaluators, tasks, n_machines,
+                   n_runs=5, max_iter=100, seed_base=42):
+    
+    maximos = []
+    
+    # Maximiza f1 minimizando -f1
+    summary_max_f1 = run_multiple_times(
+        lambda sol: -evaluators[0]["evaluator"](sol), tasks, n_machines, n_runs, max_iter, seed_base
+    )
+    # O valor real é o negativo do mínimo encontrado
+    maximos.append(-summary_max_f1["min"])
+
+    # Maximiza f2 minimizando -f2
+    summary_max_f2 = run_multiple_times(
+        lambda sol: -evaluators[1]["evaluator"](sol), tasks, n_machines, n_runs, max_iter, seed_base
+    )
+    maximos.append(-summary_max_f2["min"])
+
+    return maximos
+
 # Gera o summary da funcao de soma ponderada
-def run_vns_soma_ponderada(evaluator1, evaluator2, summaries, peso, tasks, n_machines,
+def run_vns_soma_ponderada(evaluators, summaries, peso, tasks, n_machines,
                            n_runs=5, max_iter=100, seed_base=42):
+    
+    maximos = calcular_maximos(evaluators, tasks, n_machines)
     def obj_func(sol):
-        return soma_ponderada(sol, evaluator1, evaluator2, summaries, peso)
+        f1, f2 = normalizar(sol, evaluators, summaries, maximos)
+        return soma_ponderada(peso, f1, f2)
     
     return run_multiple_times(obj_func, tasks, n_machines, n_runs, max_iter, seed_base)
