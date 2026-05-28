@@ -50,13 +50,6 @@ def normalizar(solucao_corrente, evaluators, summaries, maximos):
     f1_normalizado = (f1 - min_f1)/(maximos[0] - min_f1)
     f2_normalizado = (f2 - min_f2)/(maximos[1] - min_f2)
 
-    print(f"min f1 (makespan):   {summaries[0]['best_value']:.2f}")
-    print(f"min f2 (tardiness):  {summaries[1]['best_value']:.2f}")
-    print(f"nadir f1:            {maximos[0]:.2f}")
-    print(f"nadir f2:            {maximos[1]:.2f}")
-    print(f"f1 normalizado:            {f1_normalizado:.2f}")
-    print(f"f2 normalizado:            {f2_normalizado:.2f}")
-
     return f1_normalizado, f2_normalizado
 
 # Calcula os maximos de f1 e f2 (ponto nadir)
@@ -81,10 +74,15 @@ def calcular_maximos(evaluators, tasks, n_machines,
     return maximos
 
 # Gera o summary da funcao de soma ponderada
-def run_vns_soma_ponderada(evaluators, summaries, peso, tasks, n_machines,
+def run_vns_soma_ponderada(maximos, evaluators, summaries, peso, n_machines,
                            n_runs=5, max_iter=100, seed_base=42):
     
-    maximos = calcular_maximos(evaluators, tasks, n_machines)
+    if peso >= 0.5:
+        tasks = evaluators[0]["tasks"][:]   # prioriza f1
+    else:
+        tasks = evaluators[1]["tasks"][:]   # prioriza f2
+
+
     def obj_func(sol):
         f1, f2 = normalizar(sol, evaluators, summaries, maximos)
         return soma_ponderada(peso, f1, f2)

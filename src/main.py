@@ -3,7 +3,7 @@ import numpy as np
 from config import *
 from optimization import *
 from visualization import *
-from run_functions import run_single_objective, run_vns_soma_ponderada
+from run_functions import run_single_objective, run_vns_soma_ponderada, calcular_maximos
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 
 # Leitura do arquivo
@@ -48,70 +48,6 @@ def print_instance_info(n_tasks, n_machines, due_date, pt, we):
     print(f"Formato WE: {we.shape}")
 
 
-# def run_single_objective(n_tasks,n_machines, pt, we, due_date):
-#     # Cria lista de tasks 
-#     tasks = list(range(n_tasks))
-#     tasks.sort(key=lambda j: -np.min(pt[j, :]))
-#     # Cria evaluator
-#     evaluator = build_makespan_evaluator(we, pt)
-
-#     summary_f1 = run_multiple_times(
-#         evaluator, 
-#         tasks,
-#         n_machines,
-#         n_runs=N_RUNS,
-#         max_iter=MAX_ITER,
-#         seed_base=SEED_BASE
-#     )
-
-#     print_summary_table(summary_f1, "f1 (makespan)")
-#     plot_convergence(summary_f1, "Curvas de convergência - f1 (makespan)")
-#     plot_best_schedule(summary_f1["best_solution"], pt, we, due_date, "Melhor solução para f1 (makespan)")
-
-#     # ====================================
-
-#     # Cria lista de tasks 
-#     tasks = list(range(n_tasks))
-#     tasks.sort(key=lambda j: (-we[j], np.min(pt[j, :])))
-
-#     # # Cria evaluator
-#     evaluator = build_weighted_tardiness_evaluator(we, pt, due_date)
-#     summary_f2 = run_multiple_times(
-#         evaluator, 
-#         tasks,
-#         n_machines,
-#         n_runs=N_RUNS,
-#         max_iter=MAX_ITER,
-#         seed_base=SEED_BASE
-#     )
-
-#     print_summary_table(summary_f2, "f2 (soma ponderada dos atrasos)")
-#     plot_convergence(summary_f2, "Curvas de convergência - f2 (atraso ponderado)")
-#     plot_best_schedule(summary_f2["best_solution"], pt, we, due_date, "Melhor solução para f2 (atraso ponderado)")
-
-#     return summary_f1, summary_f2
-
-# def run_multiobjective(pt, we, due_date, summary_f1, summary_f2):
-#     pesos = np.linspace(0, 1, 11)
-#     resultados_pareto = []
-
-#     for peso in pesos:
-#         best_sol, _, _ = run_vns_soma_ponderada(
-#             pt, we, due_date, summary_f1, summary_f2, peso,
-#             n_runs=N_RUNS,
-#             max_iter=MAX_ITER,
-#             seed_base=SEED_BASE + int(peso * 100) 
-#         )
-#         f1, f2, _, _, _ = evaluate_solution(best_sol, pt, we, due_date)
-#         resultados_pareto.append((f1, f2))
-#         print(f"\Soma ponderada. Pesos = {peso:.2f}, (f1, f2)")
-#     print("Solucao pareto:", resultados_pareto)
-    
-#     # soma_ponderada(solucao_corrente, pt, we, due_date,summary_f1, summary_f2, peso)
-
-
-
-
 # main
 def main():
     pt, we, due_date, n_tasks, n_machines = load_instance_from_excel(FILE_PATH)
@@ -144,17 +80,33 @@ def main():
     # Mono-objetivo
     summaries = run_single_objective(evaluator_configs, n_machines, pt, we, due_date)
 
-    # Multiobjetivo
-    # pesos = np.linspace(0, 1, 11)
-    peso = 0.5
-    resultados_pareto = []
+    # ====================================
 
-    # for peso in pesos:
-    summary = run_vns_soma_ponderada(
-        evaluator_configs,
-        summaries,
-        peso, tasks, n_machines)
-    # print_summary_table(summary, "Fronteira pareto")
+    # Multiobjetivo
+    pesos = np.linspace(0, 1, 11)
+    fronteira_pareto = []
+    maximos = calcular_maximos(evaluator_configs, tasks, n_machines)
+
+    for peso in pesos:
+        summary = run_vns_soma_ponderada(
+            maximos,
+            evaluator_configs,
+            summaries,
+            peso,
+            n_machines,
+            n_runs=N_RUNS,
+            max_iter=50,
+            seed_base=SEED_BASE)
+        
+        sol = summary["best_solution"]
+        f1 = evaluator_configs[0]["evaluator"](sol)
+        f2 = evaluator_configs[1]["evaluator"](sol)
+        fronteira_pareto.append((f1, f2))
+        # print(f"Peso = {peso:.2f} -> f1={f1:.1f}, f2={f2:.1f}")
+    
+    print("Solucao pareto:", fronteira_pareto)    
+    plot_pareto_frontier(fronteira_pareto)
+
 
 
 if __name__ == "__main__":

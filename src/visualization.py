@@ -77,3 +77,29 @@ def solution_to_string(solution):
         tarefas_humanas = [t + 1 for t in tasks]
         lines.append(f"Máquina {k+1}: {tarefas_humanas}")
     return "\n".join(lines)
+
+def plot_pareto_frontier(fronteira_pareto):
+    # Filtra soluções dominadas
+    pareto = []
+    for f1, f2 in fronteira_pareto:
+        dominada = any(
+            (a <= f1 and b <= f2 and (a < f1 or b < f2))
+            for a, b in fronteira_pareto
+        )
+        if not dominada:
+            pareto.append((f1, f2))
+
+    pareto.sort()
+    f1_vals = [p[0] for p in pareto]
+    f2_vals = [p[1] for p in pareto]
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(f1_vals, f2_vals, "bo-", label="Fronteira de Pareto")
+    plt.xlabel("f1 (Makespan)")
+    plt.ylabel("f2 (Atraso Ponderado)")
+    plt.title("Fronteira de Pareto - Soma Ponderada")
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig("img/pareto.png")
+    plt.close()
