@@ -20,7 +20,7 @@ def plot_convergence(results_summary, title):
     plt.savefig("img/convergencia.png")
     plt.close()
 
-def plot_best_schedule(solution, pt, we, due_date, title="Melhor solução"):
+def plot_best_schedule(solution, title, pt, we, due_date):
     makespan = evaluate_makespan(solution, we, pt)
     weighted_tardiness = evaluate_weighted_tardiness(solution, we, pt, due_date)
 

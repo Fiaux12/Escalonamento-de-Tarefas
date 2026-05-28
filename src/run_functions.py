@@ -17,19 +17,19 @@ SEED_BASE = 42
 # }
 
 # recebe lista de evaluator configs e retorna lista de summaries
-def run_single_objective(evaluator_configs, n_machine):
+def run_single_objective(evaluator_configs, n_machine, pt, we, due_date):
     summaries = []
     for evaluator_config in evaluator_configs:
         summary = run_multiple_times(
-            evaluator_config.evaluator, evaluator_config.tasks, n_machine,
+            evaluator_config["evaluator"], evaluator_config["tasks"], n_machine,
             n_runs=N_RUNS,
             max_iter=MAX_ITER,
             seed_base=SEED_BASE
         )
 
-        print_summary_table(summary, evaluator_config.name)
-        plot_convergence(summary, "Curvas de convergência - " + evaluator_config.name)
-        plot_best_schedule(summary["best_solution"], "Melhor solução para " + evaluator_config.name)
+        print_summary_table(summary, evaluator_config["name"])
+        plot_convergence(summary, "Curvas de convergência - " + evaluator_config["name"])
+        plot_best_schedule(summary["best_solution"], "Melhor solução para " + evaluator_config["name"], pt, we, due_date)
         summaries.append(summary)
     
     return summaries
