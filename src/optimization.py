@@ -1,6 +1,5 @@
 import numpy as np
 import random
-
 from heuristic import greedy_initial_solution as gis
 
 # Estrutura de Vizinhança
@@ -46,10 +45,42 @@ def inter_machine_swap(solution, rng):
     sol[k1][i], sol[k2][j] = sol[k2][j], sol[k1][i]
     return sol
 
+def intra_machine_2opt(solution, rng):
+    sol = clone_solution(solution)
+    candidate_machines = [k for k in range(len(sol)) if len(sol[k]) >= 3]
+
+    if not candidate_machines:
+        return sol
+
+    k = rng.choice(candidate_machines)
+    i, j = sorted(rng.sample(range(len(sol[k])), 2))
+    sol[k][i:j+1] = sol[k][i:j+1][::-1]
+    return sol
+
+def or_opt(solution, rng):
+    sol = clone_solution(solution)
+    candidate_machines = [k for k in range(len(sol)) if len(sol[k]) >= 2]
+
+    if not candidate_machines:
+        return sol
+
+    k_from = rng.choice(candidate_machines)
+    idx = rng.randrange(len(sol[k_from]) - 1)
+    block = sol[k_from][idx:idx+2]
+    sol[k_from] = sol[k_from][:idx] + sol[k_from][idx+2:]
+
+    k_to = rng.choice([k for k in range(len(sol)) if k != k_from])
+    pos = rng.randrange(len(sol[k_to]) + 1)
+    sol[k_to] = sol[k_to][:pos] + block + sol[k_to][pos:]
+
+    return sol
+
 NEIGHBORHOODS = [
     ("swap_intra", intra_machine_swap),
     ("insert_inter", inter_machine_insert),
     ("swap_inter", inter_machine_swap),
+    # ("2opt_intra", intra_machine_2opt),
+    # ("or_opt", or_opt),
 ]
 
 # Copia de funcao clone usada em heuristic

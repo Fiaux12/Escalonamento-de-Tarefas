@@ -1,13 +1,9 @@
 import pandas as pd
 import numpy as np
-import random
-import matplotlib.pyplot as plt
 from config import *
 from optimization import *
-from monobjetivo.visualization import *
-# from multiobjetivo.soma_ponderada import *
-from run_functions import run_single_objective
-
+from visualization import *
+from run_functions import run_single_objective, run_vns_soma_ponderada
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 
 # Leitura do arquivo
@@ -50,8 +46,6 @@ def print_instance_info(n_tasks, n_machines, due_date, pt, we):
     print(f"Due date: {due_date}")
     print(f"Formato PT: {pt.shape}")
     print(f"Formato WE: {we.shape}")
-    print(pt)
-    print(we)
 
 
 # def run_single_objective(n_tasks,n_machines, pt, we, due_date):
@@ -122,18 +116,9 @@ def print_instance_info(n_tasks, n_machines, due_date, pt, we):
 def main():
     pt, we, due_date, n_tasks, n_machines = load_instance_from_excel(FILE_PATH)
 
-    # print_instance_info(n_tasks, n_machines, due_date, pt, we)
-
-    get_rng = lambda : random.Random(42)
-
-    # Comparando funcao desacoplada: makespan
-    # Greedy antigo
-    # res = greedy_initial_solution(pt, we, due_date, "f1", get_rng())
-    # print(res)
-
+    print_instance_info(n_tasks, n_machines, due_date, pt, we)
     evaluator_configs = []
 
-    # Greedy novo
     # Cria lista de tasks 
     tasks = list(range(n_tasks))
     tasks.sort(key=lambda j: -np.min(pt[j, :]))
@@ -144,17 +129,8 @@ def main():
         "name": "f1 (makespan)"
         })
 
-    # res = gis(evaluator, tasks, n_machines, get_rng())
-    # print(res)
+    # ====================================
 
-    # # ====================================
-
-    # # Comparando funcao desacoplada: weighted_tardiness
-    # # Greedy antigo
-    # # res = greedy_initial_solution(pt, we, due_date, "f2", get_rng())
-    # # print(res)
-
-    # Greedy novo
     # Cria lista de tasks 
     tasks = list(range(n_tasks))
     tasks.sort(key=lambda j: (-we[j], np.min(pt[j, :])))
@@ -164,13 +140,23 @@ def main():
         "tasks": tasks,
         "name": "f2 (soma ponderada dos atrasos)"
         })
-    
 
-    # # Mono-objetivo
+    # Mono-objetivo
     summaries = run_single_objective(evaluator_configs, n_machines, pt, we, due_date)
 
-    # # Multiobjetivo
-    # run_multiobjective(pt, we, due_date, solucao_f1, solucao_f2)
+    # Multiobjetivo
+    # pesos = np.linspace(0, 1, 11)
+    peso = 0.5
+    resultados_pareto = []
+
+    # for peso in pesos:
+    summary = run_vns_soma_ponderada(
+        evaluator_configs[0]["evaluator"],
+        evaluator_configs[1]["evaluator"],
+        summaries,
+        peso, tasks, n_machines)
+    print_summary_table(summary, "Fronteira pareto")
+
 
 if __name__ == "__main__":
     main()
