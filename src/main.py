@@ -95,7 +95,7 @@ def main():
             peso,
             n_machines,
             n_runs=N_RUNS,
-            max_iter=50,
+            max_iter=MAX_ITER,
             seed_base=SEED_BASE)
         
         sol = summary["best_solution"]

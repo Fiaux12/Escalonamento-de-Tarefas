@@ -75,12 +75,13 @@ def or_opt(solution, rng):
 
     return sol
 
+# TODO: (melhoria da otimização) add mais vizinhanca
 NEIGHBORHOODS = [
     ("swap_intra", intra_machine_swap),
     ("insert_inter", inter_machine_insert),
     ("swap_inter", inter_machine_swap),
-    # ("2opt_intra", intra_machine_2opt),
-    # ("or_opt", or_opt),
+    ("2opt_intra", intra_machine_2opt), 
+    ("or_opt", or_opt),
 ]
 
 # Copia de funcao clone usada em heuristic
@@ -104,18 +105,26 @@ def local_search(solution, evaluator, rng, max_no_improve=60):
         neighborhoods = NEIGHBORHOODS[:]
         rng.shuffle(neighborhoods)
 
+        # TODO:Em vez de aceitar o primeiro que melhora, avalia N candidatos e pega o melhor
+        # best improvement
+        best_candidate = None
+        best_candidate_val = current_val
+
         for _, neigh in neighborhoods:
-            candidate = neigh(current, rng)
-            candidate_val = evaluator(candidate)
+            candidates = [neigh(current, rng) for _ in range(5)]
+            local_best = min(candidates, key=evaluator)
+            local_val = evaluator(local_best)
 
-            if candidate_val < current_val:
-                current = candidate
-                current_val = candidate_val
-                improved = True
-                no_improve = 0
-                break
 
-        if not improved:
+            if local_val < best_candidate_val:
+                best_candidate_val = local_val
+                best_candidate = local_best
+
+        if best_candidate is not None:
+            current = best_candidate
+            current_val = best_candidate_val
+            no_improve = 0
+        else:
             no_improve += 1
 
     return current, current_val
@@ -137,9 +146,15 @@ def run_vns(evaluator, tasks, n_machine, rng, max_iter=400):
         k = 0
 
         while k < len(NEIGHBORHOODS) and iter_count < max_iter:
-            _, neigh = NEIGHBORHOODS[k]
+            # _, neigh = NEIGHBORHOODS[k]
 
-            shaken = neigh(best, rng)
+            # TODO: (melhoria da otimização) Aplica mais movimentos aleatórios 
+            # Shake: k controla intensidade, mais tentativas sem melhora = shake maior
+            n_shakes = rng.randint(k + 2, k + 5)
+            shaken = clone_solution(best)
+            for _ in range(n_shakes):
+                _, neigh = rng.choice(NEIGHBORHOODS)
+                shaken = neigh(shaken, rng)
 
             candidate, candidate_val = local_search(
                 shaken, evaluator, rng, max_no_improve=60
