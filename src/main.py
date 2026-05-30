@@ -5,6 +5,7 @@ from optimization import *
 from visualization import *
 from run_functions import run_single_objective, run_vns_soma_ponderada, calcular_maximos
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
+from erestrito import run_epsilon_restrito, plot_epsilon_frontiers
 
 # Leitura do arquivo
 def load_instance_from_excel(file_path):
@@ -106,6 +107,13 @@ def main():
     
     print("Solucao pareto:", fronteira_pareto)    
     plot_pareto_frontier(fronteira_pareto)
+
+    all_points_by_run, global_front = run_epsilon_restrito(
+    evaluator_configs, maximos, summaries, n_machines,
+    n_runs=N_RUNS, max_iter=MAX_ITER_E_RESTRITO, seed_base=SEED_BASE
+    )
+
+    plot_epsilon_frontiers(all_points_by_run, global_front)
 
 
 
