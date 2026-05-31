@@ -75,7 +75,7 @@ def or_opt(solution, rng):
 
     return sol
 
-# TODO: (melhoria da otimização) add mais vizinhanca
+# (melhoria da otimização) add mais vizinhanca
 NEIGHBORHOODS = [
     ("swap_intra", intra_machine_swap),
     ("insert_inter", inter_machine_insert),
@@ -105,7 +105,7 @@ def local_search(solution, evaluator, rng, max_no_improve=60):
         neighborhoods = NEIGHBORHOODS[:]
         rng.shuffle(neighborhoods)
 
-        # TODO:Em vez de aceitar o primeiro que melhora, avalia N candidatos e pega o melhor
+        # (melhoria da otimização) Em vez de aceitar o primeiro que melhora, avalia N candidatos e pega o melhor
         # best improvement
         best_candidate = None
         best_candidate_val = current_val
@@ -146,9 +146,7 @@ def run_vns(evaluator, tasks, n_machine, rng, max_iter=400):
         k = 0
 
         while k < len(NEIGHBORHOODS) and iter_count < max_iter:
-            # _, neigh = NEIGHBORHOODS[k]
-
-            # TODO: (melhoria da otimização) Aplica mais movimentos aleatórios 
+            # (melhoria da otimização) Aplica mais movimentos aleatórios 
             # Shake: k controla intensidade, mais tentativas sem melhora = shake maior
             n_shakes = rng.randint(k + 2, k + 5)
             shaken = clone_solution(best)
@@ -182,7 +180,6 @@ def run_multiple_times(evaluator, tasks, n_machine, n_runs=5, max_iter=400, seed
 
     for r in range(n_runs):
         seed = seed_base + r
-        # TODO: posso variar a seed para ter resultados diferentes a cada execucao
         rng = random.Random(seed)
 
         best_sol, best_val, history = run_vns(evaluator, tasks, n_machine, rng, max_iter)
