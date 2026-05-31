@@ -75,7 +75,7 @@ def calcular_maximos(evaluators, tasks, n_machines,
 
 # Gera o summary da funcao de soma ponderada
 def run_vns_soma_ponderada(maximos, evaluators, summaries, peso, n_machines,
-                           n_runs=5, max_iter=100, seed_base=42):
+                           n_runs=5, max_iter=400, seed_base=42):
     
     if peso >= 0.5:
         tasks = evaluators[0]["tasks"][:]   # prioriza f1

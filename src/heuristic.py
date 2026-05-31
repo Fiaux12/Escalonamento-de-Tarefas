@@ -22,6 +22,8 @@ def greedy_initial_solution(evaluator, tasks, n_machines, rng):
     """
     solution = create_empty_solution(n_machines)
 
+    tasks = tasks[:]
+
     for i in range(len(tasks) - 1):
         if rng.random() < 0.15:
             j = rng.randint(i, len(tasks) - 1)

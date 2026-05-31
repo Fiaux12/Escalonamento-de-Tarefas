@@ -108,6 +108,7 @@ def main():
     print("Solucao pareto:", fronteira_pareto)    
     plot_pareto_frontier(fronteira_pareto)
 
+    # E-Restrito
     all_points_by_run, global_front = run_epsilon_restrito(
     evaluator_configs, maximos, summaries, n_machines,
     n_runs=N_RUNS, max_iter=MAX_ITER_E_RESTRITO, seed_base=SEED_BASE
