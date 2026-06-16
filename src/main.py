@@ -6,6 +6,7 @@ from visualization import *
 from run_functions import run_single_objective, run_vns_soma_ponderada, calcular_maximos
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 from erestrito import run_epsilon_restrito, plot_epsilon_frontiers
+from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
 
 # Leitura do arquivo
 def load_instance_from_excel(file_path):
@@ -111,10 +112,17 @@ def main():
     # E-Restrito
     all_points_by_run, global_front = run_epsilon_restrito(
     evaluator_configs, maximos, summaries, n_machines,
-    n_runs=N_RUNS, max_iter=MAX_ITER_E_RESTRITO, seed_base=SEED_BASE
+    n_runs=N_RUNS, max_iter=MAX_ITER, seed_base=SEED_BASE
     )
 
     plot_epsilon_frontiers(all_points_by_run, global_front)
+
+    # ====================================
+    # Decisão
+
+    matrix = build_performance_matrix(global_front, we, pt, due_date)
+    matrix_normalizada = normalize_matrix(matrix)
+    print_performance_matrix(matrix, matrix_normalizada)
 
 
 

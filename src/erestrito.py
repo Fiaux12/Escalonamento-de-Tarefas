@@ -17,14 +17,23 @@ def run_vns_epsilon_restrito(epsilon, primary_evaluator, constraint_evaluator,
 
 
 def filter_non_dominated(points):
-    non_dominated = []
+    seen = set()
+    unique_points = []
     for p in points:
+        key = (round(p[0], 4), round(p[1], 4))
+        if key not in seen:
+            seen.add(key)
+            unique_points.append(p)
+ 
+    non_dominated = []
+    for p in unique_points:
         dominated = any(
-            q[0] <= p[0] and q[1] <= p[1] and q != p
-            for q in points
+            q[0] <= p[0] and q[1] <= p[1] and (q[0] < p[0] or q[1] < p[1])
+            for q in unique_points
         )
         if not dominated:
             non_dominated.append(p)
+ 
     return sorted(non_dominated, key=lambda p: p[0])
 
 
@@ -58,10 +67,13 @@ def run_epsilon_restrito(evaluator_configs, maximos, summaries, n_machines,
             sol = result["solution"]
             f1 = evaluator_configs[0]["evaluator"](sol)
             f2 = evaluator_configs[1]["evaluator"](sol)
-            all_points_by_run[result["run"]].append((f1, f2))
+            all_points_by_run[result["run"]].append((f1, f2, sol))
 
     all_points = [p for pts in all_points_by_run.values() for p in pts]
     global_front = filter_non_dominated(all_points)
+    
+    print(f"Pontos distintos na fronteira global antes de selecionar: {len(global_front)}")
+ 
     global_front = select_most_spread(global_front, n=20)
 
     return all_points_by_run, global_front
