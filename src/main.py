@@ -7,6 +7,7 @@ from run_functions import run_single_objective, run_vns_soma_ponderada, calcular
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 from erestrito import run_epsilon_restrito, plot_epsilon_frontiers
 from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
+<<<<<<< HEAD
 from electre import (
     executar_electre_i,
     imprimir_resultado_electre,
@@ -14,6 +15,12 @@ from electre import (
     plot_gantt_electre
 )
 
+=======
+from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
+from decisao import (build_performance_matrix, print_performance_matrix, normalize_matrix,
+                      compute_ahp_weights, print_ahp_results,
+                      AHP_COMPARISON_MATRIX, CRITERIA_NAMES)
+>>>>>>> b0f223e (Implementação do AHP)
 # Leitura do arquivo
 def load_instance_from_excel(file_path):
     """
@@ -129,6 +136,9 @@ def main():
     matrix = build_performance_matrix(global_front, we, pt, due_date)
     matrix_normalizada = normalize_matrix(matrix)
     print_performance_matrix(matrix, matrix_normalizada)
+    
+    pesos_ahp, lambda_max, CI, RI, CR = compute_ahp_weights(AHP_COMPARISON_MATRIX)
+    print_ahp_results(CRITERIA_NAMES, AHP_COMPARISON_MATRIX, pesos_ahp, lambda_max, CI, RI, CR)
 
 
     if len(global_front) >= 2:

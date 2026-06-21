@@ -11,10 +11,19 @@ from evaluation import evaluate_makespan, evaluate_weighted_tardiness
 #     return evaluate_weighted_tardiness(solution, we, pt, due_date)
 
 
+# tabela de índices de consistência (RI) para matrizes de comparação par a par
+RI_TABLE = {1: 0.00, 2: 0.00, 3: 0.58, 4: 0.90, 5: 1.12,
+            6: 1.24, 7: 1.32, 8: 1.41, 9: 1.45, 10: 1.49}
 
+CRITERIA_NAMES = ["f1 (makespan)", "f2 (atraso pond.)", "Robustez", "Balanceamento"]
 
-
-
+# Matriz de comparação par a par para os critérios
+AHP_COMPARISON_MATRIX = np.array([
+    [1,    1,    3,    4  ],
+    [1,    1,    3,    4  ],
+    [1/3,  1/3,  1,    2  ],
+    [1/4,  1/4,  1/2,  1  ],
+])
 # Robustez
 
 # Perturba pt com ruído gaussiano ±5% em N cenários
@@ -118,3 +127,35 @@ def print_performance_matrix(matrix, normalized):
     print("-" * 90)
     for i, row in enumerate(normalized):
         print(f"  {i+1:>3} | " + " | ".join(f"{v:>18.4f}" for v in row))
+
+## AHP Analytic Hierarchy Process
+def compute_ahp_weights(comparison_matrix):
+    n = comparison_matrix.shape[0]
+
+    col_sum = comparison_matrix.sum(axis=0)
+    normalized = comparison_matrix / col_sum
+    weights = normalized.mean(axis=1)
+
+    lambda_max = np.mean((comparison_matrix @ weights) / weights)
+    CI = (lambda_max - n) / (n - 1) if n > 2 else 0.0
+    RI = RI_TABLE.get(n, 1.49)
+    CR = CI / RI if RI != 0 else 0.0
+
+    return weights, lambda_max, CI, RI, CR
+
+def print_ahp_results(criteria_names, comparison_matrix, weights, lambda_max, CI, RI, CR):
+    print("\n===== AHP: Matriz de Comparação Par-a-Par =====")
+    print(f"{'':>20} | " + " | ".join(f"{c:>16}" for c in criteria_names))
+    for i, row in enumerate(comparison_matrix):
+        print(f"{criteria_names[i]:>20} | " + " | ".join(f"{v:>16.3f}" for v in row))
+
+    print("\n===== AHP: Pesos dos Critérios =====")
+    for c, w in zip(criteria_names, weights):
+        print(f"  {c:<20} peso = {w:.4f}")
+
+    print("\n===== AHP: Verificação de Consistência =====")
+    print(f"  lambda_max = {lambda_max:.4f}")
+    print(f"  CI = {CI:.4f}")
+    print(f"  RI (n={len(criteria_names)}) = {RI:.2f}")
+    status = "CONSISTENTE" if CR < 0.10 else "INCONSISTENTE - revisar julgamentos!"
+    print(f"  CR = {CR:.4f}  -> {status}")
