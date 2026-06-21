@@ -7,6 +7,12 @@ from run_functions import run_single_objective, run_vns_soma_ponderada, calcular
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 from erestrito import run_epsilon_restrito, plot_epsilon_frontiers
 from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
+from electre import (
+    executar_electre_i,
+    imprimir_resultado_electre,
+    plot_fronteira_electre,
+    plot_gantt_electre
+)
 
 # Leitura do arquivo
 def load_instance_from_excel(file_path):
@@ -123,6 +129,24 @@ def main():
     matrix = build_performance_matrix(global_front, we, pt, due_date)
     matrix_normalizada = normalize_matrix(matrix)
     print_performance_matrix(matrix, matrix_normalizada)
+
+
+    if len(global_front) >= 2:
+        pesos_electre = [0.30, 0.30, 0.20, 0.20]
+
+        resultado_electre = executar_electre_i(
+            matrix_normalizada,
+            pesos=pesos_electre,
+            matrix_bruta=matrix,
+            limiar_concordancia=0.60,
+            limiar_discordancia=0.40
+        )
+
+        imprimir_resultado_electre(resultado_electre)
+        plot_fronteira_electre(global_front, resultado_electre)
+        plot_gantt_electre(global_front, resultado_electre, pt, due_date)
+    else:
+        print("\nELECTRE I não executado: é necessário ter pelo menos 2 alternativas.")
 
 
 

@@ -97,5 +97,5 @@ def plot_epsilon_frontiers(all_points_by_run, global_front):
     plt.title('Fronteira Pareto - ε-restrito')
     plt.legend()
     plt.tight_layout()
-    plt.savefig('img/pareto_epsilon.png')
+    plt.savefig('src/img/pareto_epsilon.png')
     plt.close()

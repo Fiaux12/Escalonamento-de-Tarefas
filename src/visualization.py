@@ -14,7 +14,7 @@ def plot_convergence(results_summary, title):
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig("img/convergencia.png")
+    plt.savefig("src/img/convergencia.png")
     plt.close()
 
 def plot_best_schedule(solution, title, pt, we, due_date):
@@ -51,7 +51,7 @@ def plot_best_schedule(solution, title, pt, we, due_date):
     plt.legend()
     plt.grid(True, axis="x", alpha=0.3)
     plt.tight_layout()
-    plt.savefig("img/schedule.png")
+    plt.savefig("src/img/schedule.png")
     plt.close()
 
     print("Resumo da melhor solução:")
@@ -101,5 +101,5 @@ def plot_pareto_frontier(fronteira_pareto):
     plt.legend()
     plt.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig("img/pareto.png")
+    plt.savefig("src/img/pareto.png")
     plt.close()
