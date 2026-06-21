@@ -1,0 +1,6 @@
+Instância carregada com sucesso.
+Número de tarefas: 50
+Número de máquinas: 5
+Due date: 13
+Formato PT: (50, 5)
+Formato WE: (50,)

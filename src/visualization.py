@@ -17,7 +17,7 @@ def plot_convergence(results_summary, title):
     plt.savefig("src/img/convergencia.png")
     plt.close()
 
-def plot_best_schedule(solution, title, pt, we, due_date):
+def plot_best_schedule(solution, title, pt, we, due_date,output_path):
     makespan = evaluate_makespan(solution, we, pt)
     weighted_tardiness = evaluate_weighted_tardiness(solution, we, pt, due_date)
 
@@ -51,7 +51,7 @@ def plot_best_schedule(solution, title, pt, we, due_date):
     plt.legend()
     plt.grid(True, axis="x", alpha=0.3)
     plt.tight_layout()
-    plt.savefig("src/img/schedule.png")
+    plt.savefig(output_path)
     plt.close()
 
     print("Resumo da melhor solução:")
