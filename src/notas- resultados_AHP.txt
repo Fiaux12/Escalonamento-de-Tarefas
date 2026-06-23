@@ -1,0 +1,298 @@
+Instância carregada com sucesso.
+Número de tarefas: 25
+Número de máquinas: 5
+Due date: 6
+Formato PT: (25, 5)
+Formato WE: (25,)
+
+===== Resultados para f1 (makespan) =====
+Execução 1: valor final = 14.0000
+Execução 2: valor final = 12.0000
+Execução 3: valor final = 12.0000
+
+min = 12.0000
+std = 0.9428
+max = 14.0000
+Resumo da melhor solução:
+Makespan = 12.00
+Atraso ponderado = 308.00
+Máquina 1: [21, 25, 6, 1, 15, 19, 24]
+Máquina 2: [11, 10, 7]
+Máquina 3: [16, 9, 22, 8, 18]
+Máquina 4: [4, 2, 23, 12, 17]
+Máquina 5: [5, 20, 3, 13, 14]
+
+===== Resultados para f2 (soma ponderada dos atrasos) =====
+Execução 1: valor final = 66.0000
+Execução 2: valor final = 66.0000
+Execução 3: valor final = 66.0000
+
+min = 66.0000
+std = 0.0000
+max = 66.0000
+Resumo da melhor solução:
+Makespan = 13.00
+Atraso ponderado = 66.00
+Máquina 1: [25, 19, 4, 15, 21]
+Máquina 2: [1, 23, 10, 24, 6, 20]
+Máquina 3: [9, 16, 8, 7, 18]
+Máquina 4: [12, 22, 2, 17, 11]
+Máquina 5: [14, 3, 13, 5]
+Epsilons: [13738.  12370.8 11003.6  9636.4  8269.2  6902.   5534.8  4167.6  2800.4
+  1433.2    66. ]
+Pontos distintos na fronteira global antes de selecionar: 2
+
+Calculando matriz de desempenho...
+  Sol  1: f1=12.00  f2=308.00  robustez=11.15  balanceamento=0.49
+  Sol  2: f1=13.00  f2=66.00  robustez=3.45  balanceamento=1.96
+
+===== Matriz de Desempenho (valores brutos) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |            12.0000 |           308.0000 |            11.1509 |             0.4899
+    2 |            13.0000 |            66.0000 |             3.4501 |             1.9596
+
+===== Matriz Normalizada (1 = melhor, 0 = pior) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |             1.0000 |             0.0000 |             0.0000 |             1.0000
+    2 |             0.0000 |             1.0000 |             1.0000 |             0.0000
+
+===== AHP: Matriz de Comparação Par-a-Par =====
+                     |    f1 (makespan) | f2 (atraso pond.) |         Robustez |    Balanceamento
+       f1 (makespan) |            1.000 |            1.000 |            3.000 |            4.000
+   f2 (atraso pond.) |            1.000 |            1.000 |            3.000 |            4.000
+            Robustez |            0.333 |            0.333 |            1.000 |            2.000
+       Balanceamento |            0.250 |            0.250 |            0.500 |            1.000
+
+===== AHP: Pesos dos Critérios =====
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== AHP: Verificação de Consistência =====
+  lambda_max = 4.0207
+  CI = 0.0069
+  RI (n=4) = 0.90
+  CR = 0.0077  -> CONSISTENTE
+Pesos AHP calculados:
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== Ranking final via AHP (soma ponderada) =====
+ Pos |  Sol |    Score | Detalhe por criterio
+--------------------------------------------------------------------------------
+   1 |    2 |   0.5278 | f1 (makespan)=0.000*0.384  f2 (atraso pond.)=1.000*0.384  Robustez=1.000*0.143  Balanceamento=0.000*0.088
+   2 |    1 |   0.4722 | f1 (makespan)=1.000*0.384  f2 (atraso pond.)=0.000*0.384  Robustez=0.000*0.143  Balanceamento=1.000*0.088
+
+>> Melhor solucao segundo o AHP: Sol 2 (score = 0.5278)
+
+
+
+
+
+
+
+
+
+==================================================================================================================================================================================================================
+Instância carregada com sucesso.
+Número de tarefas: 50
+Número de máquinas: 5
+Due date: 13
+Formato PT: (50, 5)
+Formato WE: (50,)
+
+===== Resultados para f1 (makespan) =====
+Execução 1: valor final = 59.0000
+Execução 2: valor final = 60.0000
+Execução 3: valor final = 60.0000
+Execução 4: valor final = 60.0000
+Execução 5: valor final = 60.0000
+
+min = 59.0000
+std = 0.4000
+max = 60.0000
+Resumo da melhor solução:
+Makespan = 59.00
+Atraso ponderado = 5170.00
+Máquina 1: [32, 16, 1, 41, 35, 13, 15, 7, 18]
+Máquina 2: [9, 5, 42, 12, 33, 26, 43, 2, 50, 30]
+Máquina 3: [10, 29, 27, 49, 39, 37, 28, 17, 8, 36, 6]
+Máquina 4: [45, 23, 21, 4, 14, 38, 40, 20, 31]
+Máquina 5: [22, 11, 3, 25, 47, 48, 24, 19, 34, 44, 46]
+
+===== Resultados para f2 (soma ponderada dos atrasos) =====
+Execução 1: valor final = 2398.0000
+Execução 2: valor final = 2411.0000
+Execução 3: valor final = 2401.0000
+Execução 4: valor final = 2402.0000
+Execução 5: valor final = 2402.0000
+
+min = 2398.0000
+std = 4.3543
+max = 2411.0000
+Resumo da melhor solução:
+Makespan = 59.00
+Atraso ponderado = 2398.00
+Máquina 1: [16, 23, 7, 37, 21, 34, 46, 15, 1]
+Máquina 2: [2, 50, 25, 18, 33, 9, 13, 30, 12, 26]
+Máquina 3: [29, 20, 42, 27, 4, 41, 36, 49, 39, 8]
+Máquina 4: [6, 14, 38, 48, 10, 47, 32, 45, 31, 40]
+Máquina 5: [17, 24, 11, 43, 28, 35, 22, 5, 3, 44, 19]
+Epsilons: [52626.  47603.2 42580.4 37557.6 32534.8 27512.  22489.2 17466.4 12443.6
+  7420.8  2398. ]
+Pontos distintos na fronteira global antes de selecionar: 1
+
+Calculando matriz de desempenho...
+  Sol  1: f1=58.00  f2=2397.00  robustez=31.88  balanceamento=1.79
+
+===== Matriz de Desempenho (valores brutos) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |            58.0000 |          2397.0000 |            31.8822 |             1.7889
+
+===== Matriz Normalizada (1 = melhor, 0 = pior) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |             0.5000 |             0.5000 |             0.5000 |             0.5000
+
+===== AHP: Matriz de Comparação Par-a-Par =====
+                     |    f1 (makespan) | f2 (atraso pond.) |         Robustez |    Balanceamento
+       f1 (makespan) |            1.000 |            1.000 |            3.000 |            4.000
+   f2 (atraso pond.) |            1.000 |            1.000 |            3.000 |            4.000
+            Robustez |            0.333 |            0.333 |            1.000 |            2.000
+       Balanceamento |            0.250 |            0.250 |            0.500 |            1.000
+
+===== AHP: Pesos dos Critérios =====
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== AHP: Verificação de Consistência =====
+  lambda_max = 4.0207
+  CI = 0.0069
+  RI (n=4) = 0.90
+  CR = 0.0077  -> CONSISTENTE
+Pesos AHP calculados:
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== Ranking final via AHP (soma ponderada) =====
+ Pos |  Sol |    Score | Detalhe por criterio
+--------------------------------------------------------------------------------
+   1 |    1 |   0.5000 | f1 (makespan)=0.500*0.384  f2 (atraso pond.)=0.500*0.384  Robustez=0.500*0.143  Balanceamento=0.500*0.088
+
+>> Melhor solucao segundo o AHP: Sol 1 (score = 0.5000)
+
+
+
+
+
+
+
+
+
+
+==================================================================================================================================================================================================================
+Instância carregada com sucesso.
+Número de tarefas: 100
+Número de máquinas: 5
+Due date: 26
+Formato PT: (100, 5)
+Formato WE: (100,)
+
+===== Resultados para f1 (makespan) =====
+Execução 1: valor final = 123.0000
+Execução 2: valor final = 118.0000
+Execução 3: valor final = 120.0000
+Execução 4: valor final = 118.0000
+Execução 5: valor final = 118.0000
+
+min = 118.0000
+std = 1.9596
+max = 123.0000
+Resumo da melhor solução:
+Makespan = 118.00
+Atraso ponderado = 24268.00
+Máquina 1: [25, 6, 89, 9, 98, 40, 27, 78, 48, 23, 50, 22, 88, 15, 42, 17, 2, 85, 74]
+Máquina 2: [97, 82, 34, 53, 49, 28, 96, 33, 68, 58, 100, 47, 79, 21, 43, 62, 75, 76, 71, 92, 3, 37, 94]
+Máquina 3: [63, 93, 1, 16, 41, 31, 39, 51, 55, 13, 77, 30, 56, 36, 38, 46, 80, 83, 35, 95, 8, 99, 70]
+Máquina 4: [10, 14, 72, 67, 12, 57, 54, 90, 65, 26, 86, 24, 19, 66, 60, 91, 69]
+Máquina 5: [7, 5, 59, 61, 87, 45, 4, 18, 11, 29, 73, 81, 32, 84, 44, 20, 64, 52]
+
+===== Resultados para f2 (soma ponderada dos atrasos) =====
+Execução 1: valor final = 8885.0000
+Execução 2: valor final = 8889.0000
+Execução 3: valor final = 8888.0000
+Execução 4: valor final = 8872.0000
+Execução 5: valor final = 8899.0000
+
+min = 8872.0000
+std = 8.6856
+max = 8899.0000
+Resumo da melhor solução:
+Makespan = 111.00
+Atraso ponderado = 8872.00
+Máquina 1: [43, 94, 4, 39, 2, 27, 99, 89, 48, 60, 5, 8, 91, 97, 16, 76, 98, 42, 25, 52, 15]
+Máquina 2: [95, 79, 21, 32, 37, 78, 20, 75, 35, 26, 51, 33, 23, 77, 96, 28, 6, 83, 100, 62, 3, 19, 58, 68, 38]
+Máquina 3: [56, 40, 41, 24, 13, 30, 74, 49, 34, 1, 46, 36, 92, 64, 55, 72, 54, 63, 45, 18]
+Máquina 4: [93, 59, 86, 65, 66, 70, 22, 88, 12, 81, 61, 10, 57, 84, 67, 47, 50]
+Máquina 5: [17, 80, 69, 7, 14, 73, 71, 85, 11, 9, 53, 90, 82, 29, 44, 31, 87]
+Epsilons: [260071.  234951.1 209831.2 184711.3 159591.4 134471.5 109351.6  84231.7
+  59111.8  33991.9   8872. ]
+Pontos distintos na fronteira global antes de selecionar: 2
+
+Calculando matriz de desempenho...
+  Sol  1: f1=109.00  f2=8890.00  robustez=104.12  balanceamento=1.94
+  Sol  2: f1=112.00  f2=8884.00  robustez=111.98  balanceamento=2.73
+
+===== Matriz de Desempenho (valores brutos) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |           109.0000 |          8890.0000 |           104.1227 |             1.9391
+    2 |           112.0000 |          8884.0000 |           111.9824 |             2.7276
+
+===== Matriz Normalizada (1 = melhor, 0 = pior) =====
+  Sol |      f1 (makespan) |  f2 (atraso pond.) |           Robustez |      Balanceamento
+------------------------------------------------------------------------------------------
+    1 |             1.0000 |             0.0000 |             1.0000 |             1.0000
+    2 |             0.0000 |             1.0000 |             0.0000 |             0.0000
+
+===== AHP: Matriz de Comparação Par-a-Par =====
+                     |    f1 (makespan) | f2 (atraso pond.) |         Robustez |    Balanceamento
+       f1 (makespan) |            1.000 |            1.000 |            3.000 |            4.000
+   f2 (atraso pond.) |            1.000 |            1.000 |            3.000 |            4.000
+            Robustez |            0.333 |            0.333 |            1.000 |            2.000
+       Balanceamento |            0.250 |            0.250 |            0.500 |            1.000
+
+===== AHP: Pesos dos Critérios =====
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== AHP: Verificação de Consistência =====
+  lambda_max = 4.0207
+  CI = 0.0069
+  RI (n=4) = 0.90
+  CR = 0.0077  -> CONSISTENTE
+Pesos AHP calculados:
+  f1 (makespan)        peso = 0.3845
+  f2 (atraso pond.)    peso = 0.3845
+  Robustez             peso = 0.1433
+  Balanceamento        peso = 0.0878
+
+===== Ranking final via AHP (soma ponderada) =====
+ Pos |  Sol |    Score | Detalhe por criterio
+--------------------------------------------------------------------------------
+   1 |    1 |   0.6155 | f1 (makespan)=1.000*0.384  f2 (atraso pond.)=0.000*0.384  Robustez=1.000*0.143  Balanceamento=1.000*0.088
+   2 |    2 |   0.3845 | f1 (makespan)=0.000*0.384  f2 (atraso pond.)=1.000*0.384  Robustez=0.000*0.143  Balanceamento=0.000*0.088
+
+>> Melhor solucao segundo o AHP: Sol 1 (score = 0.6155)

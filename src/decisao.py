@@ -159,3 +159,30 @@ def print_ahp_results(criteria_names, comparison_matrix, weights, lambda_max, CI
     print(f"  RI (n={len(criteria_names)}) = {RI:.2f}")
     status = "CONSISTENTE" if CR < 0.10 else "INCONSISTENTE - revisar julgamentos!"
     print(f"  CR = {CR:.4f}  -> {status}")
+
+def compute_ahp_scores(matrix, pesos_ahp):
+    normalized = normalize_matrix(matrix)
+    scores = normalized @ pesos_ahp
+    return normalized, scores
+ 
+
+def print_ahp_ranking(matrix, pesos_ahp, criteria_names):
+    normalized, scores = compute_ahp_scores(matrix, pesos_ahp)
+ 
+    ranking = np.argsort(-scores)  # ordem decrescente de score
+ 
+    print("\n===== Ranking final via AHP (soma ponderada) =====")
+    print(f"{'Pos':>4} | {'Sol':>4} | {'Score':>8} | Detalhe por criterio")
+    print("-" * 80)
+ 
+    for pos, i in enumerate(ranking, start=1):
+        detalhe = "  ".join(
+            f"{criteria_names[j]}={normalized[i, j]:.3f}*{pesos_ahp[j]:.3f}"
+            for j in range(len(criteria_names))
+        )
+        print(f"{pos:>4} | {i + 1:>4} | {scores[i]:>8.4f} | {detalhe}")
+ 
+    melhor = ranking[0] + 1
+    print(f"\n>> Melhor solucao segundo o AHP: Sol {melhor} (score = {scores[ranking[0]]:.4f})")
+ 
+    return scores, ranking

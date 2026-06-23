@@ -6,16 +6,13 @@ from visualization import *
 from run_functions import run_single_objective, run_vns_soma_ponderada, calcular_maximos
 from evaluation import build_makespan_evaluator, build_weighted_tardiness_evaluator
 from erestrito import run_epsilon_restrito, plot_epsilon_frontiers
-from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
 from electre import (
     executar_electre_i,
     imprimir_resultado_electre,
     plot_fronteira_electre,
     plot_gantt_electre
 )
-
-from decisao import build_performance_matrix, print_performance_matrix, normalize_matrix
-from decisao import (build_performance_matrix, print_performance_matrix, normalize_matrix,
+from decisao import (build_performance_matrix, print_performance_matrix, normalize_matrix, print_ahp_ranking,
                       compute_ahp_weights, print_ahp_results,
                       AHP_COMPARISON_MATRIX, CRITERIA_NAMES)
 
@@ -140,6 +137,11 @@ def main():
     # AHP
     pesos_ahp, lambda_max, CI, RI, CR = compute_ahp_weights(AHP_COMPARISON_MATRIX)
     print_ahp_results(CRITERIA_NAMES, AHP_COMPARISON_MATRIX, pesos_ahp, lambda_max, CI, RI, CR)
+    pesos_ahp, lambda_max, CI, RI, CR = compute_ahp_weights(AHP_COMPARISON_MATRIX)
+    print("Pesos AHP calculados:")
+    for nome, w in zip(CRITERIA_NAMES, pesos_ahp):
+        print(f"  {nome:<20} peso = {w:.4f}")
+    print_ahp_ranking(matrix, pesos_ahp, CRITERIA_NAMES)
 
     # ELECTRE
     if len(global_front) >= 2:
